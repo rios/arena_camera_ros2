@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Enable debugging -->
+    <arg name="debug" default="false" />
+    <!-- If respawn == true and the node dies, it will automatically be respawned -->
+    <arg name="respawn" default="false" />
+    <arg name="respawn_delay" default="30" />
+    <!-- Node name -->
+    <arg name="node_name" default="arena_camera_node" />
+    <!-- Camera name -->
+    <arg name="cam_name" default="camera" />
+    <!-- Camera serial -->
+    <arg name="cam_serial" default="0" />
+    <!-- Camera configuration file -->
+    <arg name="cam_config" default="$(find arena_camera_ros)/config/no_config.json" />
+    <!-- Flag to activate image resizing using OpenCV -->
+    <arg name="image_resize" default="false" />
+    <!-- Resize resolution (x) -->
+    <arg name="image_res_x" default="640" />
+    <!-- Resize resolution (y) -->
+    <arg name="image_res_y" default="480" />
+
+    <!-- This node handles all the cameras -->
+    <node name="$(arg node_name)" pkg="arena_camera_ros" type="arena_camera_node.py"
+            output="screen" respawn="$(arg respawn)" respawn_delay="$(arg respawn_delay)">
+        <param name="cam_name" type="str" value="$(arg cam_name)" />
+        <param name="cam_serial" type="str" value="$(arg cam_serial)" />
+        <param name="cam_config" type="str" value="$(arg cam_config)" />
+        <param name="image_resize" type="bool" value="$(arg image_resize)" />
+        <param name="image_res_x" type="int" value="$(arg image_res_x)" />
+        <param name="image_res_y" type="int" value="$(arg image_res_y)" />
+        <param name="debug" type="bool" value="$(arg debug)" />
+    </node>
+</launch>

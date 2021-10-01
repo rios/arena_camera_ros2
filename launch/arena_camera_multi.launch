@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Enable debugging -->
+    <arg name="debug" default="false" />
+    <!-- If respawn == true and the node dies, it will automatically be respawned -->
+    <arg name="respawn" default="false" />
+    <arg name="respawn_delay" default="30" />
+    <!-- Node name -->
+    <arg name="node_name" default="arena_camera_multi" />
+    <!-- Node configuration file -->
+    <arg name="config" default="$(find arena_camera_ros)/config/namespace.yaml" />
+
+    <!-- This node handles all the cameras -->
+    <node name="$(arg node_name)" pkg="arena_camera_ros" type="arena_camera_multi.py"
+            output="screen" respawn="$(arg respawn)" respawn_delay="$(arg respawn_delay)">
+        <param name="launch_path" type="str" value="$(find arena_camera_ros)" />
+        <param name="name_prefix" type="str" value="flir" />
+        <param name="config" type="yaml" value="$(arg config)" />
+        <param name="debug" type="bool" value="$(arg debug)" />
+    </node>
+</launch>
