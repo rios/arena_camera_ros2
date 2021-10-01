@@ -2,3 +2,5 @@
 **id_rsa*
 **id_ed*
 **.pyc
+*.vs*/
+.env
