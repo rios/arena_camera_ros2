@@ -1,6 +1,6 @@
 ---
   camera1:
-    serial_no: "20129593"
+    serial_no: "204100236"
     config: "no_config.json"
     stream: "true"
     resize:
