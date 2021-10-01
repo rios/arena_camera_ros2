@@ -240,7 +240,7 @@ class ArenaCamera(object):
         self._cam.nodemap["TriggerSelector"].value = "FrameStart"
 
         # Set trigger source to software
-        self._cam.nodemap["TriggerSource"] = "Software"
+        self._cam.nodemap["TriggerSource"].value = "Software"
 
         # Activate trigger mode
         self._cam.nodemap["TriggerMode"].value = "On"
