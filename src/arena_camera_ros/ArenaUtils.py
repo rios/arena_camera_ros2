@@ -1,5 +1,6 @@
 # Copyright RIOS AI, Inc. Licensed under the Apache License, Version 2.0.
 
+import time
 import rospy
 from arena_api.system import system
 
@@ -86,6 +87,9 @@ def cycle_cameras():
                 while not cam.nodemap["TriggerArmed"].value:
                     continue
 
+                system_time = time.time()
+                print("System Time:", system_time)
+
                 # Trigger!
                 cam.nodemap["TriggerSoftware"].execute()
 
@@ -95,6 +99,11 @@ def cycle_cameras():
 
             # Get buffer
             buff = cam.get_buffer()
+
+            image_time = buff.timestamp_ns / 1e9
+            print("Image Time:", image_time)
+            diff_time = (image_time - system_time)
+            print("Diff Time:", diff_time, "\n")
 
             # Requeue the image buffer
             cam.requeue_buffer(buff)
