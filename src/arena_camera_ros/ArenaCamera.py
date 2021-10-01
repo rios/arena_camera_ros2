@@ -349,7 +349,7 @@ class ArenaCamera(object):
         buff = self._cam.get_buffer()
 
         if buff.is_incomplete:
-            rospy.logerr("Device {} image incomplete".format(self._cam_serial))
+            rospy.logwarn("Device {} image incomplete".format(self._cam_serial))
         else:
             # Create ROS image message
             img.encoding = self._encoding["ros"]
