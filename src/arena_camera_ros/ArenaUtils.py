@@ -37,45 +37,20 @@ def list_cameras():
     ret = []
 
     # Get cameras
-    system = PySpin.System.GetInstance()
-    cams = system.GetCameras()
+    cam_infos = system.device_infos
 
     # Check if there are any cameras found
-    if cams.GetSize() > 0:
+    if cam_infos:
         # Initialize cameras
-        for i, cam in enumerate(cams):
-            # Initialize camera
-            cam.Init()
-
-            # Retrieve TL device nodemap
-            nodemap_tldevice = cam.GetTLDeviceNodeMap()
-
+        for ci in cam_infos:
             # Initialize variables
-            serial_number = -1
-            user_id = ""
-            cam_info = {}
-
-            # Get the serial number of the camera
-            node_device_serial_number = PySpin.CStringPtr(nodemap_tldevice.GetNode('DeviceSerialNumber'))
-            if PySpin.IsAvailable(node_device_serial_number) and PySpin.IsReadable(node_device_serial_number):
-                cam_info["serial"] = node_device_serial_number.GetValue()
-
-            node_device_user_id = PySpin.CStringPtr(nodemap_tldevice.GetNode('DeviceUserID'))
-            if PySpin.IsAvailable(node_device_user_id) and PySpin.IsReadable(node_device_user_id):
-                cam_info["userid"] = node_device_user_id.GetValue()
+            cam_info = {
+                "serial": ci["serial"],
+                "userid": ci["name"]
+            }
 
             # Add cam information to the return list
             ret.append(cam_info)
-
-            # Deinitialize camera
-            cam.DeInit()
-
-        # Delete camera pointer
-        del cam
-
-    # Delete cameras
-    cams.Clear()
-    system.ReleaseInstance()
 
     return ret
 
@@ -88,33 +63,43 @@ def cycle_cameras():
 
     :returns: True if cameras are detected. False, otherwise.
     """
-    # Get cameras
-    system = PySpin.System.GetInstance()
-    cams = system.GetCameras()
+    num_buffers = 1
+    timeout = 200  # milliseconds
 
-    # Check if there are any cameras found
-    if cams.GetSize() == 0:
-        return False
-    else:
-        # Initialize cameras
-        for i, cam in enumerate(cams):
-            # Initialize camera
-            cam.Init()
+    # Init devices
+    cams = system.create_device()
 
-            # Begin image acquisition
-            cam.BeginAcquisition()
+    for cam in cams:
+        # Enable trigger mode
+        cam.nodemap["TriggerMode"].value = "On"
 
-            # End image acquisition
-            cam.EndAcquisition()
+        # Select trigger mode
+        cam.nodemap["TriggerSelector"].value = "FrameStart"
 
-            # Deinitialize camera
-            cam.DeInit()
+        # Set trigger source to Software
+        cam.nodemap["TriggerSource"].value = "Software"
 
-        # Delete camera pointer
-        del cam
+        # Start stream
+        with cam.start_stream(num_buffers) as ss:
+            for _ in range(num_buffers):
+                # Wait for trigger to get armed
+                while not cam.nodemap["TriggerArmed"].value:
+                    continue
 
-    # Delete cameras
-    cams.Clear()
-    system.ReleaseInstance()
+                # Trigger!
+                cam.nodemap["TriggerSoftware"].execute()
+
+                # Wait for the next image
+                if num_buffers > 1:
+                    cam.wait_for_next_leader(timeout)
+
+            # Get buffer
+            buff = cam.get_buffer()
+
+            # Requeue the image buffer
+            cam.requeue_buffer(buff)
+
+    # Disable trigger mode
+    cam.nodemap["TriggerMode"].value = "Off"
 
     return True
