@@ -36,6 +36,7 @@ def create_arena_node_multi():
                 "image_resize:=" + v["resize"]["apply"],
                 "image_res_x:=" + v["resize"]["res_x"],
                 "image_res_y:=" + v["resize"]["res_y"],
+                "stream:=" + v["stream"],
                 "debug:=" + is_debug_active
             )
         )])

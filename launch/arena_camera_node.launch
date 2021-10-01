@@ -19,6 +19,8 @@
     <arg name="image_res_x" default="640" />
     <!-- Resize resolution (y) -->
     <arg name="image_res_y" default="480" />
+    <!-- Control streaming -->
+    <arg name="stream" default="true" />
 
     <!-- This node handles all the cameras -->
     <node name="$(arg node_name)" pkg="arena_camera_ros" type="arena_camera_node.py"
@@ -30,5 +32,6 @@
         <param name="image_res_x" type="int" value="$(arg image_res_x)" />
         <param name="image_res_y" type="int" value="$(arg image_res_y)" />
         <param name="debug" type="bool" value="$(arg debug)" />
+        <param name="stream" type="bool" value="$(arg stream)" />
     </node>
 </launch>

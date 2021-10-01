@@ -2,6 +2,7 @@
   camera1:
     serial_no: "20129593"
     config: "no_config.json"
+    stream: "true"
     resize:
       apply: "false"
       res_x: "640"

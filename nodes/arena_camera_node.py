@@ -15,7 +15,8 @@ def create_arena_node():
         cam_name=rospy.get_param("~cam_name"),
         config=rospy.get_param("~cam_config"),
         resize=rospy.get_param("~image_resize"),
-        resize_res=(rospy.get_param("~image_res_x"), rospy.get_param("~image_res_y"))
+        resize_res=(rospy.get_param("~image_res_x"), rospy.get_param("~image_res_y")),
+        stream=(rospy.get_param("~stream"))
     )
 
     # Init camera

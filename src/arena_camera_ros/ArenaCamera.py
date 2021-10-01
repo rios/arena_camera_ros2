@@ -20,12 +20,15 @@ class ArenaCamera(object):
 
     This class uses ``cam_serial`` to identify the camera to be managed.
 
+    If ``stream`` is set to ``True``, Action Server will be disabled.
+
     Keyword Arguments:
         * ``cam_name``: camera name
         * ``node_name``: used as a prefix to ``cam_name``
         * ``config``: camera configuration file in JSON format
         * ``resize``: flag to activate image resizing (default: ``False``)
         * ``resize_res``: resize resolution as a tuple(default:``(640, 480)``)
+        * ``stream``: flag to control streaming (default: ``True``)
 
     :param cam_serial: camera serial
     """
@@ -38,6 +41,7 @@ class ArenaCamera(object):
         self._cam_config = kwargs.get("config", None)
         self._resize = kwargs.get("resize", False)
         self._resize_res = kwargs.get("resize_res", (640, 480))
+        self._stream = kwargs.get("stream", True)
         self._encoding = {
             "camera": "RGB8",
             "ros": "rgb8"
@@ -214,12 +218,14 @@ class ArenaCamera(object):
             return
 
         # Start the action server
-        self._action_server.start()
+        if not self._stream:
+            self._action_server.start()
 
         # Start image acquisition
         with self._cam.start_stream(self._buff_size):
             while not rospy.is_shutdown():
-                self._grab_image(publish=True)
+                if self._stream:
+                    self._grab_image(publish=True)
 
 
     def _init_camera(self):
@@ -280,12 +286,13 @@ class ArenaCamera(object):
         )
 
         # Create action server
-        self._action_server = SimpleActionServer(
-            "{}/grab_images".format(self._topic_prefix),    # name
-            GrabImagesAction,                               # action
-            execute_cb=self.__callback_grab_images,         # callback
-            auto_start=False                                # needs to be False
-        )
+        if not self._stream:
+            self._action_server = SimpleActionServer(
+                "{}/grab_images".format(self._topic_prefix),    # name
+                GrabImagesAction,                               # action
+                execute_cb=self.__callback_grab_images,         # callback
+                auto_start=False                                # needs to be False
+            )
 
     def _init_ros_services(self):
         """ Advertises the ROS services. """
@@ -407,7 +414,7 @@ class ArenaCamera(object):
                 if goal.gain_given and len(goal.gamma_values) == num_images:
                     self.gamma = goal.gamma_values[i]
 
-                img = self._grab_image(publish=False)
+                img = self._grab_image(publish=True)
 
                 # Update result with the image
                 result.images.append(img)
