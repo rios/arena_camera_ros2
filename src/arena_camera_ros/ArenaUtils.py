@@ -71,6 +71,9 @@ def cycle_cameras():
     cams = system.create_device()
 
     for cam in cams:
+        # Print device serial number
+        print("Device serial number:", cam.nodemap["DeviceSerialNumber"].value)
+
         # Enable trigger mode
         cam.nodemap["TriggerMode"].value = "On"
 
