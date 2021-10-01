@@ -80,7 +80,7 @@ def cycle_cameras():
         cam.nodemap["TriggerSource"].value = "Software"
 
         # Start stream
-        with cam.start_stream(num_buffers) as ss:
+        with cam.start_stream(num_buffers):
             for _ in range(num_buffers):
                 # Wait for trigger to get armed
                 while not cam.nodemap["TriggerArmed"].value:
