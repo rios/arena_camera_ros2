@@ -348,27 +348,30 @@ class ArenaCamera(object):
         # Get image buffer
         buff = self._cam.get_buffer()
 
-        # Create ROS image message
-        img.encoding = self._encoding["ros"]
-        img.height = buff.height
-        img.width = buff.width
-        img.step = int(buff.width * (buff.bits_per_pixel / 8))
-        img.data = np.array(buff.data).tobytes()
-        img.header.stamp = rospy.Time.from_sec(buff.timestamp_ns / 1e9)
-        img.header.frame_id = self._cam_name
+        if buff.is_incomplete:
+            rospy.logerr("Device {} image incomplete".format(self._cam_serial))
+        else:
+            # Create ROS image message
+            img.encoding = self._encoding["ros"]
+            img.height = buff.height
+            img.width = buff.width
+            img.step = int(buff.width * (buff.bits_per_pixel / 8))
+            img.data = np.array(buff.data, dtype=np.uint8).reshape(-1).tobytes()
+            img.header.stamp = rospy.Time.from_sec(buff.timestamp_ns / 1e9)
+            img.header.frame_id = self._cam_name
 
-        # Publish image
-        if publish:
-            self._pub_image_raw.publish(img)
-
-        # Resize the image and publish
-        if self._resize:
-            bridge = CvBridge()
-            cv_img = bridge.imgmsg_to_cv2(img, desired_encoding="passthrough")
-            cv_res = cv2.resize(cv_img, self._resize_res)
-            img = bridge.cv2_to_imgmsg(cv_res, encoding="passthrough")
+            # Publish image
             if publish:
-                self._pub_image_color.publish(img)
+                self._pub_image_raw.publish(img)
+
+            # Resize the image and publish
+            if self._resize:
+                bridge = CvBridge()
+                cv_img = bridge.imgmsg_to_cv2(img, desired_encoding="passthrough")
+                cv_res = cv2.resize(cv_img, self._resize_res)
+                img = bridge.cv2_to_imgmsg(cv_res, encoding="passthrough")
+                if publish:
+                    self._pub_image_color.publish(img)
 
         # Requeue the image buffer
         self._cam.requeue_buffer(buff)
