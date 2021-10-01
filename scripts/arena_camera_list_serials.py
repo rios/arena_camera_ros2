@@ -8,4 +8,7 @@ from arena_camera_ros.ArenaUtils import list_cameras
 if __name__ == "__main__":
     cams = list_cameras()
     for i, c in enumerate(cams):
-        print("[{}] Serial #: {}, User ID: {}".format(i + 1, c["serial"], c["userid"] if c["userid"] else "{no user id}"))
+        serial = c["serial"] if "serial" in c.keys() else "{no serial no}"
+        userid = c["userid"] if "userid" in c.keys() else "{no user id}"
+
+        print("[{}] Serial #: {}, User ID: {}".format(i + 1, serial, userid))
