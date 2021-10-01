@@ -73,11 +73,8 @@ class ArenaCamera(object):
 
     def __del__(self):
         # Deinitialize camera
-        self._cam = None
-
-        # Release system instance
         if self._cam_info:
-            system.destroy_device(self._cam_info)
+            system.destroy_device(self._cam)
 
     @property
     def cam_active(self):
