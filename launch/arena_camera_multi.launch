@@ -14,7 +14,7 @@
     <node name="$(arg node_name)" pkg="arena_camera_ros" type="arena_camera_multi.py"
             output="screen" respawn="$(arg respawn)" respawn_delay="$(arg respawn_delay)">
         <param name="launch_path" type="str" value="$(find arena_camera_ros)" />
-        <param name="name_prefix" type="str" value="flir" />
+        <param name="name_prefix" type="str" value="arena" />
         <param name="config" type="yaml" value="$(arg config)" />
         <param name="debug" type="bool" value="$(arg debug)" />
     </node>
