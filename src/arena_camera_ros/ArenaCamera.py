@@ -219,10 +219,14 @@ class ArenaCamera(object):
             self._action_server.start()
 
         # Start image acquisition
-        with self._cam.start_stream(self._buff_size):
-            while not rospy.is_shutdown():
-                if self._stream:
-                    self._grab_image(publish=True)
+        self._cam.start_stream(self._buff_size)
+
+        while not rospy.is_shutdown():
+            if self._stream:
+                self._grab_image(publish=True)
+
+        # Stop image acquisition
+        self._cam.stop_stream()
 
 
     def _init_camera(self):
