@@ -1,5 +1,6 @@
 # Copyright RIOS AI, Inc. Licensed under the Apache License, Version 2.0.
 
+from pathlib import Path
 import numpy as np
 import cv2
 import rospy
@@ -58,7 +59,12 @@ class ArenaCamera(object):
                 self._cam_found = True
                 break
 
-        if not self._cam_found:
+        if self._cam_found:
+            config = kwargs.get("config_file", None)
+            if config:
+                rospy.loginfo("Loading config file {} for the camera with serial {}".format(str(Path(config).name), self._cam_serial))
+                utils.import_config(self._cam, config)
+        else:
             rospy.logerr("Cannot find the camera with serial {}".format(self._cam_serial))
 
         # Camera data

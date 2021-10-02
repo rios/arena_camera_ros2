@@ -1,6 +1,7 @@
 # Copyright RIOS AI, Inc. Licensed under the Apache License, Version 2.0.
 
 import time
+import json
 import rospy
 from arena_api.system import system
 
@@ -115,3 +116,18 @@ def cycle_cameras():
     cam.nodemap["TriggerMode"].value = "Off"
 
     return True
+
+
+def import_config(cam, cfg_file):
+    """ Imports camera configuration from a JSON configuration file.
+
+    :param cam: camera pointer
+    :param cfg_file: configuration file name
+    """
+    # Load configuration from the json file
+    with open(cfg_file, "r") as fp:
+        cfg_json = json.load(fp)
+
+    # Import configuration
+    for k, v in cfg_json.items():
+        cam.nodemap[k].value = v

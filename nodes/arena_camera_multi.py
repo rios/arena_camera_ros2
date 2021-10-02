@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # Copyright RIOS AI, Inc. Licensed under the Apache License, Version 2.0.
 
+import os
+from pathlib import Path
 import yaml
 import rospy
 import roslaunch
@@ -12,7 +14,8 @@ def create_arena_node_multi():
 
     # Load the config file
     try:
-        with open(rospy.get_param("~config")) as fp:
+        config_file = rospy.get_param("~config")
+        with open(config_file) as fp:
             cam_config = yaml.load(fp, Loader=yaml.SafeLoader)
     except FileNotFoundError as e:
         rospy.logerr(e)
@@ -23,6 +26,9 @@ def create_arena_node_multi():
     launch_file = rospy.get_param("~launch_path") + "/arena_camera_node.launch"
     is_debug_active = str(rospy.get_param("~debug"))
 
+    # Find path of the yaml file
+    config_path = str(Path(config_file).parent.absolute())
+
     # Create camera nodes
     cam_list = []
     for k, v in cam_config.items():
@@ -32,7 +38,7 @@ def create_arena_node_multi():
                 "node_name:=" + name_prefix + "_" + k,
                 "cam_name:=" + k,
                 "cam_serial:=" + v["serial_no"],
-                "cam_config:=" + v["config"],
+                "cam_config:=" + os.path.join(config_path, v["config"]),
                 "image_resize:=" + v["resize"]["apply"],
                 "image_res_x:=" + v["resize"]["res_x"],
                 "image_res_y:=" + v["resize"]["res_y"],
