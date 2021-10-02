@@ -89,7 +89,7 @@ class ArenaCamera(object):
         if not isinstance(value, int):
             rospy.logerr("Cannot set binning_x, the value must be an integer")
         else:
-            self._cam.nodemap["BinningHorizontal"].value =  value
+            self._cam.nodemap["BinningHorizontal"].value =  int(value)
 
     @property
     def binning_y(self):
@@ -100,7 +100,7 @@ class ArenaCamera(object):
         if not isinstance(value, int):
             rospy.logerr("Cannot set binning_y, the value must be an integer")
         else:
-            self._cam.nodemap["BinningVertical"].value =  value
+            self._cam.nodemap["BinningVertical"].value =  int(value)
 
     @property
     def framerate(self):
@@ -119,7 +119,7 @@ class ArenaCamera(object):
     def exposure(self, value):
         if self.exposure_auto:
             self.exposure_auto = False
-        self._cam.nodemap["ExposureTime"].value = value
+        self._cam.nodemap["ExposureTime"].value = float(value)
 
     @property
     def gamma(self):
@@ -134,7 +134,7 @@ class ArenaCamera(object):
     def gamma(self, value):
         if not self.gamma_enable:
             self.gamma_enable = True
-        self._cam.nodemap["Gamma"].value = value
+        self._cam.nodemap["Gamma"].value = float(value)
 
     @property
     def gain(self):
@@ -149,7 +149,7 @@ class ArenaCamera(object):
     def gain(self, value):
         if self.gain_auto:
             self.gain_auto = False
-        self._cam.nodemap["Gain"].value = value
+        self._cam.nodemap["Gain"].value = float(value)
 
     @property
     def exposure_auto(self):
@@ -188,7 +188,7 @@ class ArenaCamera(object):
 
     @gamma_enable.setter
     def gamma_enable(self, value):
-        self._cam.nodemap["GammaEnable"].value = True
+        self._cam.nodemap["GammaEnable"].value = bool(value)
 
     def init(self):
         """ Initializes the camera and ROS topics/services. """
