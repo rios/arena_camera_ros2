@@ -367,9 +367,9 @@ class ArenaCamera(object):
             # Resize the image and publish
             if self._resize:
                 bridge = CvBridge()
-                cv_img = bridge.imgmsg_to_cv2(img, desired_encoding="passthrough")
+                cv_img = bridge.imgmsg_to_cv2(img, desired_encoding=self._encoding["ros"])
                 cv_res = cv2.resize(cv_img, self._resize_res)
-                img = bridge.cv2_to_imgmsg(cv_res, encoding="passthrough")
+                img = bridge.cv2_to_imgmsg(cv_res, encoding=self._encoding["ros"])
                 if publish:
                     self._pub_image_color.publish(img)
 
