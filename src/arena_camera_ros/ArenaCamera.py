@@ -326,6 +326,10 @@ class ArenaCamera(object):
 
         :returns: image in ROS Image format
         """
+        # Update camera info header
+        self._camera_info.header.stamp = rospy.Time.now()
+        self._camera_info.header.frame_id = self._cam_name
+
         for _ in range(self._buff_size):
             # Wait for camera trigger to get armed
             while not self._cam.nodemap["TriggerArmed"].value:
@@ -337,10 +341,6 @@ class ArenaCamera(object):
             # Wait for the next image
             if self._buff_size > 1:
                 self._cam.wait_for_next_leader(self._buff_timeout)
-
-        # Update camera info header
-        self._camera_info.header.stamp = rospy.Time.now()
-        self._camera_info.header.frame_id = self._cam_name
 
         # Initialize ROS image message
         img = Image()
