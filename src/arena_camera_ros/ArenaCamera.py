@@ -214,11 +214,14 @@ class ArenaCamera(object):
         # Create ROS services
         self._init_ros_services()
 
-    def start(self):
+    def start(self, hz):
         """ Starts the camera and the image acquisition. """
         if not self.cam_active:
             rospy.logerr("Cannot start camera with serial {}: Camera not active!".format(self._cam_serial))
             return
+
+        # Initialize rate
+        rate = rospy.Rate(float(hz))
 
         # Start the action server
         if not self._stream:
@@ -230,6 +233,7 @@ class ArenaCamera(object):
         while not rospy.is_shutdown():
             if self._stream:
                 self._grab_image(publish=True)
+                rate.sleep()
 
         # Stop image acquisition
         self._cam.stop_stream()

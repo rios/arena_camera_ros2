@@ -3,6 +3,7 @@
     serial_no: "204100236"
     config: "no_config.json"
     stream: "true"
+    framerate: "10"
     resize:
       apply: "false"
       res_x: "640"

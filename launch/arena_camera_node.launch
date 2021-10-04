@@ -21,6 +21,8 @@
     <arg name="image_res_y" default="480" />
     <!-- Control streaming -->
     <arg name="stream" default="true" />
+    <!-- Frame rate -->
+    <arg name="rate" default="10" />
 
     <!-- This node handles all the cameras -->
     <node name="$(arg node_name)" pkg="arena_camera_ros" type="arena_camera_node.py"
@@ -32,6 +34,7 @@
         <param name="image_res_x" type="int" value="$(arg image_res_x)" />
         <param name="image_res_y" type="int" value="$(arg image_res_y)" />
         <param name="debug" type="bool" value="$(arg debug)" />
+        <param name="rate" type="int" value="$(arg rate)" />
         <param name="stream" type="bool" value="$(arg stream)" />
     </node>
 </launch>

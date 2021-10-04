@@ -43,6 +43,7 @@ def create_arena_node_multi():
                 "image_res_x:=" + v["resize"]["res_x"],
                 "image_res_y:=" + v["resize"]["res_y"],
                 "stream:=" + v["stream"],
+                "rate:=" + v["framerate"],
                 "debug:=" + is_debug_active
             )
         )])

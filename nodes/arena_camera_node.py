@@ -16,14 +16,14 @@ def create_arena_node():
         config_file=rospy.get_param("~cam_config"),
         resize=rospy.get_param("~image_resize"),
         resize_res=(rospy.get_param("~image_res_x"), rospy.get_param("~image_res_y")),
-        stream=(rospy.get_param("~stream"))
+        stream=rospy.get_param("~stream")
     )
 
     # Init camera
     cam.init()
 
     # Start camera and wait for shutdown
-    cam.start()
+    cam.start(hz=rospy.get_param("~rate"))
 
 if __name__ == "__main__":
     create_arena_node()
