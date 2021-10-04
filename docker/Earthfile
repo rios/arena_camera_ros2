@@ -1,0 +1,75 @@
+# Earthfile for ROS Noetic / Ubuntu 20.04
+
+# Arguments for build
+ARG CMAKE_BUILD_TYPE=Release
+ARG CURRENT_REPO
+ARG CURRENT_BRANCH
+ARG CURRENT_COMMIT_HASH
+
+# Base image
+FROM github.com/rios-ai/<internal_build_framework>+rios-noetic
+
+base-dependencies:
+    FROM +base
+
+    # Install required packages
+    RUN apt-get update && apt-get install -y --no-install-recommends \
+            curl ssh git git-lfs \
+            python-is-python3 \
+        && rm -rf /var/lib/apt/lists/*
+
+    # Install pip3
+    RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
+        python3 get-pip.py && \
+        rm get-pip.py
+
+ros-dependencies:
+    FROM +base-dependencies
+
+    RUN apt-get update && apt-get install -y --no-install-recommends \
+            python${PYTHON_VERSION}-rospkg \
+            python${PYTHON_VERSION}-catkin-tools \
+            python${PYTHON_VERSION}-osrf-pycommon \
+            ros-${ROS_DISTRO}-catkin \
+            ros-${ROS_DISTRO}-image-common \
+            ros-${ROS_DISTRO}-vision-opencv \
+        && rm -rf /var/lib/apt/lists/*
+
+# Put custom code here
+custom-dependencies:
+    FROM +ros-dependencies
+
+    # TODO: Download Arena SDK from Wasabi
+
+    # Install Arena Python API
+    RUN pip3 install arena_api \
+        --index-url http://<internal_pypi>/simple \
+        --trusted-host <internal_pypi>
+
+    # Get camera_control_msgs package
+    GIT CLONE --branch develop git@github.com:rios-ai/camera_control_msgs.git /root/catkin_ws/src/camera_control_msgs
+
+save-source:
+  LOCALLY
+  SAVE ARTIFACT ../ source
+
+copy-source:
+    FROM +custom-dependencies
+
+    # Copy Arena ROS driver package
+    COPY +save-source/* /root/catkin_ws/src/arena_camera_ros
+
+    WORKDIR /root/catkin_ws
+
+    # Install ROS packages
+    RUN /bin/bash -c 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
+        catkin config \
+        --extend /opt/ros/${ROS_DISTRO} --install --cmake-args -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} && \
+        catkin build'
+
+# Step used to tag an image w/ the RIOS standard tagging scheme
+tag-image:
+    FROM +copy-source
+
+    # Use the shared Tag Image code
+    DO github.com/rios-ai/<internal_build_framework>+TAG_IMAGE --BRANCH=$CURRENT_BRANCH --REPO=$CURRENT_REPO --COMMIT=$CURRENT_COMMIT_HASH
