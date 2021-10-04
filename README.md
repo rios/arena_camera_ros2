@@ -40,15 +40,17 @@ $ catkin build
 ### Launching single camera node
 
 ```bash
-$ roslaunch arena_camera_ros arena_camera_node.launch
+$ roslaunch arena_camera_ros arena_camera_node.launch cam_serial:={serial no}
 ```
+
+Please use `arena_camera_list_serials.py` to list the serial numbers of the discovered cameras.
 
 ### Launching single camera node with custom resolution
 
 Example resolution: `640x480`
 
 ```bash
-$ roslaunch arena_camera_ros arena_camera_node.launch image_resize:=true image_res_x:=640 image_res_y:=480
+$ roslaunch arena_camera_ros arena_camera_node.launch cam_serial:={serial no} image_resize:=true image_res_x:=640 image_res_y:=480
 ```
 
 ### Launching multi camera node
