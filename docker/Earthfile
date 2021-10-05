@@ -56,7 +56,7 @@ custom-dependencies:
         && ldconfig
 
     # Install Arena Python API
-    RUN pip3 install arena_api \
+    RUN pip${PYTHON_VERSION} install arena_api \
         --index-url http://<internal_pypi>/simple \
         --trusted-host <internal_pypi>
 
