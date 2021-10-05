@@ -21,8 +21,9 @@ def check_and_set(cam, key, value):
         # Integer node
         v_min = cam.nodemap[key].min
         v_max = cam.nodemap[key].max
-        if v_min <= value <= v_max:
-            cam.nodemap[key].value = int(value)
+        v = int(value)
+        if v_min <= v <= v_max:
+            cam.nodemap[key].value = v
         else:
             rospy.logerr("Value {} should be between {} and {}".format(value, v_min, v_max))
     elif inode_type == 3:
@@ -32,8 +33,9 @@ def check_and_set(cam, key, value):
         # Float node
         v_min = cam.nodemap[key].min
         v_max = cam.nodemap[key].max
-        if v_min <= value <= v_max:
-            cam.nodemap[key].value = float(value)
+        v = float(value)
+        if v_min <= v <= v_max:
+            cam.nodemap[key].value = v
         else:
             rospy.logerr("Value {} should be between {} and {}".format(value, v_min, v_max))
     elif inode_type == 6:
