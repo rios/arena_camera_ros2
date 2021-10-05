@@ -36,7 +36,7 @@ def check_and_set(cam, key, value):
         pass
 
 
-def check_and_get(cam, key, value):
+def check_and_get(cam, key):
     """ Getter implementation for Arena API.
 
     :param cam: camera pointer
