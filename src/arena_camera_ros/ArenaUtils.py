@@ -6,6 +6,66 @@ import rospy
 from arena_api.system import system
 
 
+def check_and_set(cam, key, value):
+    """ Setter implementation for Arena API.
+
+    :param cam: camera pointer
+    :param key: node name in the camera nodemap dictionary
+    :returns: value of the node
+    """
+    # Get the camera node and its type
+    inode_type = cam.nodemap[key].interface_type.value
+
+    # Node interface type
+    if inode_type == 2:
+        # Integer node
+        cam.nodemap[key].value = int(value)
+    elif inode_type == 3:
+        # Boolean node
+        cam.nodemap[key].value = bool(value)
+    elif inode_type == 5:
+        # Float node
+        cam.nodemap[key].value = float(value)
+    elif inode_type == 6:
+        # String node
+        cam.nodemap[key].value = str(value)
+    elif inode_type == 9:
+        # Enumeration node
+        cam.nodemap[key].value = str(value)
+    else:
+        pass
+
+
+def check_and_get(cam, key, value):
+    """ Getter implementation for Arena API.
+
+    :param cam: camera pointer
+    :param key: node name in the camera nodemap dictionary
+    :returns: value of the node
+    """
+    # Get the camera node and its type
+    inode_type = cam.nodemap[key].interface_type.value
+
+    # Node interface type
+    if inode_type == 2:
+        # Integer node
+        return int(cam.nodemap[key].value)
+    elif inode_type == 3:
+        # Boolean node
+        return bool(cam.nodemap[key].value)
+    elif inode_type == 5:
+        # Float node
+        return float(cam.nodemap[key].value)
+    elif inode_type == 6:
+        # String node
+        return str(cam.nodemap[key].value)
+    elif inode_type == 9:
+        # Enumeration node
+        return str(cam.nodemap[key].value)
+    else:
+        pass
+
+
 def validate_goal(goal):
     """ Validates the goal received by an action server
 
@@ -130,4 +190,4 @@ def import_config(cam, cfg_file):
 
     # Import configuration
     for k, v in cfg_json.items():
-        cam.nodemap[k].value = v
+        check_and_set(cam, k, v)
