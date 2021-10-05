@@ -19,13 +19,23 @@ def check_and_set(cam, key, value):
     # Node interface type
     if inode_type == 2:
         # Integer node
-        cam.nodemap[key].value = int(value)
+        v_min = cam.nodemap[key].min
+        v_max = cam.nodemap[key].max
+        if v_min <= value <= v_max:
+            cam.nodemap[key].value = int(value)
+        else:
+            rospy.logerr("Value {} should be between {} and {}".format(value, v_min, v_max))
     elif inode_type == 3:
         # Boolean node
         cam.nodemap[key].value = bool(value)
     elif inode_type == 5:
         # Float node
-        cam.nodemap[key].value = float(value)
+        v_min = cam.nodemap[key].min
+        v_max = cam.nodemap[key].max
+        if v_min <= value <= v_max:
+            cam.nodemap[key].value = float(value)
+        else:
+            rospy.logerr("Value {} should be between {} and {}".format(value, v_min, v_max))
     elif inode_type == 6:
         # String node
         cam.nodemap[key].value = str(value)
