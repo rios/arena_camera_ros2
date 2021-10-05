@@ -8,3 +8,13 @@
       apply: "false"
       res_x: "640"
       res_y: "480"
+
+  camera2:
+    serial_no: "213602316"
+    config: "no_config.json"
+    stream: "true"
+    framerate: "10"
+    resize:
+      apply: "false"
+      res_x: "640"
+      res_y: "480"
