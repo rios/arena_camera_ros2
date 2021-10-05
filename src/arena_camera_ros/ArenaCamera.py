@@ -88,29 +88,29 @@ class ArenaCamera(object):
 
     @property
     def binning_x(self):
-        return self._cam.nodemap["BinningHorizontal"].value
+        return utils.check_and_get(self._cam, "BinningHorizontal")
 
     @binning_x.setter
     def binning_x(self, value):
         if not isinstance(value, int):
             rospy.logerr("Cannot set binning_x, the value must be an integer")
         else:
-            self._cam.nodemap["BinningHorizontal"].value =  int(value)
+            utils.check_and_set(self._cam, "BinningHorizontal", value)
 
     @property
     def binning_y(self):
-        return self._cam_nodemap["BinningVertical"].value
+        return utils.check_and_get(self._cam, "BinningVertical")
 
     @binning_x.setter
     def binning_y(self, value):
         if not isinstance(value, int):
             rospy.logerr("Cannot set binning_y, the value must be an integer")
         else:
-            self._cam.nodemap["BinningVertical"].value =  int(value)
+            utils.check_and_set(self._cam, "BinningVertical", value)
 
     @property
     def framerate(self):
-        return self._cam.nodemap["AcquisitionFrameRate"].value
+        return utils.check_and_get(self._cam, "AcquisitionFrameRate")
 
     @property
     def exposure(self):
@@ -119,13 +119,13 @@ class ArenaCamera(object):
         :getter: Gets exposure time
         :setter: Sets exposure time
         """
-        return self._cam.nodemap["ExposureTime"].value
+        return utils.check_and_get(self._cam, "ExposureTime")
 
     @exposure.setter
     def exposure(self, value):
         if self.exposure_auto:
             self.exposure_auto = False
-        self._cam.nodemap["ExposureTime"].value = float(value)
+        utils.check_and_set(self._cam, "ExposureTime", value)
 
     @property
     def gamma(self):
@@ -134,13 +134,13 @@ class ArenaCamera(object):
         :getter: Gets gamma correction
         :setter: Sets gamma correction
         """
-        return self._cam.nodemap["Gamma"].value
+        return utils.check_and_get(self._cam, "Gamma")
 
     @gamma.setter
     def gamma(self, value):
         if not self.gamma_enable:
             self.gamma_enable = True
-        self._cam.nodemap["Gamma"].value = float(value)
+        utils.check_and_set(self._cam, "Gamma", value)
 
     @property
     def gain(self):
@@ -149,13 +149,13 @@ class ArenaCamera(object):
         :getter: Gets gain
         :setter: Sets gain
         """
-        return self._cam.nodemap["Gain"].value / 48
+        return utils.check_and_get(self._cam, "Gain") / 48
 
     @gain.setter
     def gain(self, value):
         if self.gain_auto:
             self.gain_auto = False
-        self._cam.nodemap["Gain"].value = float(value)
+        utils.check_and_set(self._cam, "Gain", value * 48)
 
     @property
     def exposure_auto(self):
@@ -164,11 +164,12 @@ class ArenaCamera(object):
         :getter: Gets exposure auto
         :setter: Sets exposute auto
         """
-        return True if self._cam.nodemap["ExposureAuto"].value == "Continuous" else False
+        return True if utils.check_and_get(self._cam, "ExposureAuto") == "Continuous" else False
 
     @exposure_auto.setter
     def exposure_auto(self, value):
-        self._cam.nodemap["ExposureAuto"].value = "Continuous" if value else "Off"
+        val =  "Continuous" if value else "Off"
+        utils.check_and_set(self._cam, "ExposureAuto", val)
 
     @property
     def gain_auto(self):
@@ -177,11 +178,12 @@ class ArenaCamera(object):
         :getter: Gets gain auto
         :setter: Sets gain auto
         """
-        return True if self._cam.nodemap["GainAuto"].value == "Continuous" else False
+        return True if utils.check_and_get(self._cam, "GainAuto") == "Continuous" else False
 
     @gain_auto.setter
     def gain_auto(self, value):
-        self._cam.nodemap["GainAuto"].value = "Continuous" if value else "Off"
+        val = "Continuous" if value else "Off"
+        utils.check_and_set(self._cam, "GainAuto", val)
 
     @property
     def gamma_enable(self):
@@ -190,11 +192,11 @@ class ArenaCamera(object):
         :getter: Gets gamma enabled status
         :setter: Sets gamma enabled status
         """
-        return self._cam.nodemap["GammaEnable"].value
+        return utils.check_and_get(self._cam, "GammaEnable")
 
     @gamma_enable.setter
     def gamma_enable(self, value):
-        self._cam.nodemap["GammaEnable"].value = bool(value)
+        utils.check_and_set(self._cam, "GammaEnable", value)
 
     def init(self):
         """ Initializes the camera and ROS topics/services. """
