@@ -1,6 +1,13 @@
+*.pyc
 **/keys
 **id_rsa*
 **id_ed*
 **.pyc
-*.vs*/
+.vs*/
+build/
+devel/
+install/
+logs/
+.catkin_tools/
+CATKIN_IGNORE
 .env
