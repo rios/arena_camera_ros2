@@ -1,4 +1,4 @@
-on: 
+on:
   # Will run on PRs opened against a branch listed below, or if the branches below change
   push:
     branches:
@@ -30,13 +30,13 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           git fetch --all
-          git checkout ${{ github.event.pull_request.base.ref }} 
+          git checkout ${{ github.event.pull_request.base.ref }}
           git pull origin ${{ github.event.pull_request.base.ref }} --depth=10000
           git checkout ${{ github.event.pull_request.head.ref }}
           git pull origin ${{ github.event.pull_request.head.ref }} --depth=10000
 
       - name: Checkout <internal_rios_github_actions> repository
-        uses: actions/checkout@v2                            
+        uses: actions/checkout@v2
         with:
           repository: rios-ai/<internal_rios_github_actions>
           ref: feature/earthly
@@ -47,7 +47,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         id: rebase
         uses: ./.github/actions/rebase_warning
-        with: 
+        with:
           head_branch: ${{ github.event.pull_request.head.ref }}
           base_branch: ${{ github.event.pull_request.base.ref }}
 
@@ -62,9 +62,9 @@ jobs:
           body: |
             ### :x: ${{ github.event.pull_request.head.sha }} is not up to date
             This branch `${{ github.event.pull_request.head.ref }}` is not up to date with the base branch `${{ github.event.pull_request.base.ref }}`
-            
+
             Please correct this error by rebasing your changes onto the base branch.
-            
+
             _This is an automated message_
 
       - if: steps.rebase.outputs.requires_rebase == 'true'
@@ -74,9 +74,9 @@ jobs:
       - name: Earthly Build Action
         id: build
         uses: ./.github/actions/earthly
-        with: 
+        with:
           working-directory: .
-          secret_args: '{"AWS_SECRET_ACCESS_KEY": "${{ secrets.WASABI_SECRET_ACCESS_KEY }}", "AWS_ACCESS_KEY_ID": "${{ secrets.WASABI_ACCESS_KEY_ID }}"}'
+          secret_args: ${{ secrets.EARTHLY_SECRET_ARGS }}
 
       - name: Notify On Push
         if: ${{ github.event_name == 'push' }}
