@@ -1,4 +1,20 @@
 # Earthfile for ROS Noetic / Ubuntu 20.04
+#
+# NOTE: This Earthfile was originally written for internal infrastructure.
+# It references:
+#   - A private Earthly base image (rios-ai/<internal_build_framework>+rios-noetic)
+#   - The Arena SDK hosted on an internal S3 bucket
+#   - The arena_api Python package hosted on an internal PyPI mirror
+#     (<internal_pypi>)
+#   - A private Docker registry (<internal_registry>)
+#   - A private GitHub repository (rios-ai/camera_control_msgs)
+#
+# These resources are not publicly available. The file is retained for
+# reference. Community users should:
+#   1. Download the Arena SDK directly from https://thinklucid.com/downloads-hub/
+#   2. Install arena_api from PyPI: pip3 install arena_api
+#   3. Obtain camera_control_msgs from its public repository
+#   4. Use a standard ROS Noetic base image (e.g., ros:noetic)
 
 # Arguments for build
 ARG CMAKE_BUILD_TYPE=Release
@@ -6,13 +22,13 @@ ARG CURRENT_REPO
 ARG CURRENT_BRANCH
 ARG CURRENT_COMMIT_HASH
 
-# Base image
-FROM github.com/rios-ai/<internal_build_framework>+rios-noetic
+# Replace the line below with a public ROS Noetic base image, e.g.:
+# FROM ros:noetic
+# FROM github.com/rios-ai/<internal_build_framework>+rios-noetic  # internal — not publicly available
 
 base-dependencies:
     FROM +base
 
-    # Install required packages
     RUN apt-get update && apt-get install -y --no-install-recommends \
             curl \
             unzip \
@@ -20,7 +36,6 @@ base-dependencies:
             python-is-python3 \
         && rm -rf /var/lib/apt/lists/*
 
-    # Install pip3
     RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
         python3 get-pip.py && \
         rm get-pip.py
@@ -37,29 +52,27 @@ ros-dependencies:
             ros-${ROS_DISTRO}-vision-opencv \
         && rm -rf /var/lib/apt/lists/*
 
-# Put custom code here
 custom-dependencies:
     FROM +ros-dependencies
 
-    # Download AWS client
     RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
         && unzip awscliv2.zip \
         && ./aws/install \
         && rm -rf aws
 
-    # Download Arena SDK from Wasabi
-    RUN --secret AWS_ACCESS_KEY_ID=+secrets/AWS_ACCESS_KEY_ID --secret AWS_SECRET_ACCESS_KEY=+secrets/AWS_SECRET_ACCESS_KEY \
-            aws --endpoint-url https://s3.us-west-1.wasabisys.com s3 cp s3://third-party/ArenaSDK_v0.1.54_Linux_x64.tar.gz . \
-        && tar zxf ArenaSDK_v0.1.54_Linux_x64.tar.gz \
-        && mv ArenaSDK_Linux_x64 /opt/ArenaSDK \
-        && rm -rf ArenaSDK_v0.1.54_Linux_x64* README \
-        && echo "/opt/ArenaSDK/lib64\n/opt/ArenaSDK/GenICam/library/lib/Linux64_x64\n/opt/ArenaSDK/ffmpeg" >> /etc/ld.so.conf.d/Arena_SDK.conf \
-        && ldconfig
+    # Download Arena SDK from LUCID (https://thinklucid.com/downloads-hub/)
+    # The original build fetched ArenaSDK_v0.1.54_Linux_x64.tar.gz from an
+    # internal S3 bucket. Replace with your own hosted copy or a direct download.
+    # RUN aws --endpoint-url <YOUR_S3_ENDPOINT> s3 cp s3://<YOUR_BUCKET>/ArenaSDK_v0.1.54_Linux_x64.tar.gz . \
+    #     && tar zxf ArenaSDK_v0.1.54_Linux_x64.tar.gz \
+    #     && mv ArenaSDK_Linux_x64 /opt/ArenaSDK \
+    #     && rm -rf ArenaSDK_v0.1.54_Linux_x64* README \
+    #     && echo "/opt/ArenaSDK/lib64\n/opt/ArenaSDK/GenICam/library/lib/Linux64_x64\n/opt/ArenaSDK/ffmpeg" \
+    #            >> /etc/ld.so.conf.d/Arena_SDK.conf \
+    #     && ldconfig
 
-    # Install Arena Python API
-    RUN pip${PYTHON_VERSION} install arena_api \
-        --index-url http://<internal_pypi>/simple \
-        --trusted-host <internal_pypi>
+    # Install Arena Python API from public PyPI
+    RUN pip${PYTHON_VERSION} install arena_api
 
     # Get camera_control_msgs package
     GIT CLONE --branch develop git@github.com:rios-ai/camera_control_msgs.git /root/catkin_ws/src/camera_control_msgs
@@ -71,20 +84,17 @@ save-source:
 copy-source:
     FROM +custom-dependencies
 
-    # Copy Arena ROS driver package
     COPY +save-source/* /root/catkin_ws/src/arena_camera_ros
 
     WORKDIR /root/catkin_ws
 
-    # Install ROS packages
     RUN /bin/bash -c 'source /opt/ros/${ROS_DISTRO}/setup.bash && \
         catkin config \
         --extend /opt/ros/${ROS_DISTRO} --install --cmake-args -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} && \
         catkin build'
 
-# Step used to tag an image w/ the RIOS standard tagging scheme
 tag-image:
     FROM +copy-source
 
-    # Use the shared Tag Image code
-    DO github.com/rios-ai/<internal_build_framework>+TAG_IMAGE --BRANCH=$CURRENT_BRANCH --REPO=$CURRENT_REPO --COMMIT=$CURRENT_COMMIT_HASH
+    # DO github.com/rios-ai/<internal_build_framework>+TAG_IMAGE --BRANCH=$CURRENT_BRANCH --REPO=$CURRENT_REPO --COMMIT=$CURRENT_COMMIT_HASH
+    # Replace with your own tagging scheme.

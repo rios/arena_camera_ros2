@@ -5,20 +5,20 @@
   <description>ROS drivers for LUCID Vision Labs cameras (Arena SDK)</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
-  <maintainer email="onur.bingol@rios.ai">Onur R. Bingol</maintainer>
+  <maintainer email="maintainer@example.com">Maintainer</maintainer>
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>BSD-3-Clause</license>
+  <license>Apache-2.0</license>
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <url type="website">https://www.rios.ai</url>
+  <url type="repository">https://github.com/rios-ai/arena_camera_ros2</url>
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
   <!-- Authors do not have to be maintainers, but could be -->
-  <author email="onur.bingol@rios.ai">Onur R. Bingol</author>
+  <author>Onur R. Bingol</author>
 
   <!-- The *depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->

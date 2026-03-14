@@ -1,5 +1,13 @@
+# NOTE: This workflow was originally written for internal infrastructure and is
+# retained here for reference only. It references a private Earthly base image
+# (rios-ai/<internal_build_framework>), a private GitHub Actions repository
+# (rios-ai/<internal_rios_github_actions>), and an internal Docker registry that are not
+# available publicly. The workflow will not succeed without those resources.
+#
+# Community contributors wishing to set up CI should replace the Earthly targets
+# with standard GitHub-hosted runners and public base images.
+
 on:
-  # Will run on PRs opened against a branch listed below, or if the branches below change
   push:
     branches:
       - 'main'
@@ -15,91 +23,14 @@ jobs:
     name: Build Docker using Earthly
 
     steps:
-      - uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.CI_SSH_KEY }}
-
-      - name: Checkout repository (and download lfs deps)
+      - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          lfs: true
-
-      - run: git lfs pull
-
-      - name: Checkout base branch (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          git fetch --all
-          git checkout ${{ github.event.pull_request.base.ref }}
-          git pull origin ${{ github.event.pull_request.base.ref }} --depth=10000
-          git checkout ${{ github.event.pull_request.head.ref }}
-          git pull origin ${{ github.event.pull_request.head.ref }} --depth=10000
-
-      - name: Checkout <internal_rios_github_actions> repository
-        uses: actions/checkout@v2
-        with:
-          repository: rios-ai/<internal_rios_github_actions>
-          path: .github/actions
-          ssh-key: ${{ secrets.CI_SSH_KEY }}
-
-      - name: Rebase Check
-        if: ${{ github.event_name == 'pull_request' }}
-        id: rebase
-        uses: ./.github/actions/rebase_warning
-        with:
-          head_branch: ${{ github.event.pull_request.head.ref }}
-          base_branch: ${{ github.event.pull_request.base.ref }}
-
-      - if: steps.rebase.outputs.requires_rebase == 'true'
-        name: Rebase Check
-        uses: peter-evans/create-or-update-comment@v1
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          token: ${{ secrets.<internal_bot_token> }}
-          author: actions-bot <actions-bot@users.noreply.github.com>
-          title: Update dependencies
-          body: |
-            ### :x: ${{ github.event.pull_request.head.sha }} is not up to date
-            This branch `${{ github.event.pull_request.head.ref }}` is not up to date with the base branch `${{ github.event.pull_request.base.ref }}`
-
-            Please correct this error by rebasing your changes onto the base branch.
-
-            _This is an automated message_
-
-      - if: steps.rebase.outputs.requires_rebase == 'true'
-        shell: bash
-        run: echo "Error" && exit 1
 
       - name: Earthly Build Action
         id: build
-        uses: ./.github/actions/earthly
-        with:
-          working-directory: .
-          secret_args: ${{ secrets.EARTHLY_SECRET_ARGS }}
-
-      - name: Notify On Push
-        if: ${{ github.event_name == 'push' }}
-        uses: peter-evans/commit-comment@v1
-        with:
-          sha: ${{ github.event.push.head }}
-          token: ${{ secrets.<internal_bot_token> }}
-          body: |
-            ### :heavy_check_mark: ${{ github.event.pull_request.head.sha }} The following docker images have been built & pushed:
-            ```
-            ${{ steps.build.outputs.branch-tag }}
-            ${{ steps.build.outputs.unique-tag }}
-            ```
-            _This is an automated message_
-      - name: Notify On PR
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: peter-evans/create-or-update-comment@v1
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          token: ${{ secrets.<internal_bot_token> }}
-          body: |
-            ### :heavy_check_mark: ${{ github.event.pull_request.head.sha }} The following docker images have been built & pushed:
-            ```
-            ${{ steps.build.outputs.branch-tag }}
-            ${{ steps.build.outputs.unique-tag }}
-            ```
-            _This is an automated message_
+        # NOTE: The Earthly target below depends on internal infrastructure.
+        # Replace with a public equivalent to enable CI for this repository.
+        run: |
+          echo "Earthly build target requires internal infrastructure."
+          echo "See docker/Earthfile and README.md for dependency details."
+          exit 0

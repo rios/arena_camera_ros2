@@ -1,6 +1,6 @@
 ---
   camera1:
-    serial_no: "204100236"
+    serial_no: "000000001"
     config: "no_config.json"
     stream: "true"
     framerate: "10"
@@ -10,7 +10,7 @@
       res_y: "480"
 
   camera2:
-    serial_no: "213602316"
+    serial_no: "000000002"
     config: "no_config.json"
     stream: "true"
     framerate: "10"
