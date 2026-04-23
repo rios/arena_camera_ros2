@@ -5,8 +5,8 @@
 #   - A private Earthly base image (rios-ai/<internal_build_framework>+rios-noetic)
 #   - The Arena SDK hosted on an internal S3 bucket
 #   - The arena_api Python package hosted on an internal PyPI mirror
-#     (<internal_pypi>)
-#   - A private Docker registry (<internal_registry>)
+#     (pypi.org)
+#   - A private Docker registry (<YOUR_REGISTRY>)
 #   - A private GitHub repository (rios-ai/camera_control_msgs)
 #
 # These resources are not publicly available. The file is retained for
