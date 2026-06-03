@@ -24,7 +24,7 @@ from LUCID Vision Labs. Refer to README.md for installation instructions.
 
 ## camera_control_msgs
 
-- **Source:** https://github.com/rios-ai/camera_control_msgs
+- **Source:** https://github.com/rios/camera_control_msgs
 - **License:** Apache-2.0
 - **Purpose:** ROS message and service definitions used by this driver for
   camera control actions (GrabImages, SetExposure, SetGain, SetGamma, etc.).

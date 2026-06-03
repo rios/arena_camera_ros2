@@ -15,7 +15,7 @@ Apache-2.0. See [LICENSE](LICENSE).
 - Python 3 (`apt install python-is-python3`)
 - [LUCID Arena SDK](https://thinklucid.com/downloads-hub/) (v0.1.54 or compatible)
 - LUCID Arena Python API (`arena_api`) — install from PyPI or LUCID's distribution
-- [`camera_control_msgs`](https://github.com/rios-ai/camera_control_msgs) ROS package
+- [`camera_control_msgs`](https://github.com/rios/camera_control_msgs) ROS package
 
 ## Installation
 
@@ -49,7 +49,7 @@ Clone this repository into your catkin workspace and build:
 
 ```bash
 cd ~/catkin_ws/src
-git clone https://github.com/rios-ai/arena_camera_ros2.git arena_camera_ros
+git clone https://github.com/rios/arena_camera_ros2.git arena_camera_ros
 cd ~/catkin_ws
 catkin build
 source devel/setup.bash

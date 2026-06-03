@@ -7,7 +7,7 @@
 #   - The arena_api Python package hosted on an internal PyPI mirror
 #     (pypi.org)
 #   - A private Docker registry (<YOUR_REGISTRY>)
-#   - A private GitHub repository (rios-ai/camera_control_msgs)
+#   - A private GitHub repository (rios/camera_control_msgs)
 #
 # These resources are not publicly available. The file is retained for
 # reference. Community users should:
@@ -75,7 +75,7 @@ custom-dependencies:
     RUN pip${PYTHON_VERSION} install arena_api
 
     # Get camera_control_msgs package
-    GIT CLONE --branch develop git@github.com:rios-ai/camera_control_msgs.git /root/catkin_ws/src/camera_control_msgs
+    GIT CLONE --branch develop https://github.com/rios/camera_control_msgs.git /root/catkin_ws/src/camera_control_msgs
 
 save-source:
   LOCALLY
